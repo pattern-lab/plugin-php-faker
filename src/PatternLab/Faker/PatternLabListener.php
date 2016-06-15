@@ -23,7 +23,7 @@ class PatternLabListener extends \PatternLab\Listener {
   public function __construct() {
     
     // add listener
-    $this->addListener("twigPatternLoader.customize","fakeContent");
+    $this->addListener("patternData.dataLoaded","fakeContent");
     
     // set-up locale
     $locale = Config::getOption("faker.locale");
@@ -36,6 +36,19 @@ class PatternLabListener extends \PatternLab\Listener {
     $this->faker->addProvider(new \Faker\Provider\DateTime($faker));
     $this->faker->addProvider(new \Faker\Provider\Image($faker));
     
+  }
+  
+  /**
+  * Clean the passed option
+  * @param  {String}       the option to be cleaned
+  *
+  * @return {String}       the cleaned option
+  */
+  private function clean($option) {
+    $option = trim($option);
+    $option = (($option[0] == '"') || ($option[0] == "'")) ? substr($option, 1) : $option;
+    $option = (($option[strlen($option)-1] == '"') || ($option[strlen($option)-1] == "'")) ? substr($option, 0, -1) : $option;
+    return $option;
   }
   
   /**
@@ -58,7 +71,7 @@ class PatternLabListener extends \PatternLab\Listener {
   }
   
   /**
-  * Read in the data and process faker data
+  * Fake some content
   */
   public function fakeContent() {
     
@@ -68,26 +81,47 @@ class PatternLabListener extends \PatternLab\Listener {
   }
   
   /**
-  * Read in the data and process faker data
+  * Format the options and fake out the data
+  * @param  {String}       the name of the formatter
+  * @param  {String}       a string of options. separated by commas if appropriate
+  *
+  * @return {String}       the formatted text
   */
   public function formatOptionsAndFake($formatter, $options) {
     
     if (($formatter == "date") || ($formatter == "time")) {
+      
+      // don't try to parse date or time options. cross our fingers
       return $this->faker->$formatter($options);
+      
     } else {
+      
+      // get explodey
       $options = explode(",", $options);
-      if (count($options) === 6) {
-        return $this->faker->$formatter($options[0],$options[1],$options[2],$options[3],$options[4],$options[5]);
-      } else if (count($options) === 5) {
-        return $this->faker->$formatter($options[0],$options[1],$options[2],$options[3],$options[4]);
-      } else if (count($options) === 4) {
-        return $this->faker->$formatter($options[0],$options[1],$options[2],$options[3]);
-      } else if (count($options) === 3) {
-        return $this->faker->$formatter($options[0],$options[1],$options[2]);
-      } else if (count($options) === 2) {
-        return $this->faker->$formatter($options[0],$options[1]);
+      $count   = count($options);
+      
+      // clean up the options
+      $option0 = $this->clean($options[0]);
+      $option1 = isset($options[1]) ? $this->clean($options[1]) : "";
+      $option2 = isset($options[2]) ? $this->clean($options[2]) : "";
+      $option3 = isset($options[3]) ? $this->clean($options[3]) : "";
+      $option4 = isset($options[4]) ? $this->clean($options[4]) : "";
+      $option5 = isset($options[5]) ? $this->clean($options[5]) : "";
+      $option6 = isset($options[6]) ? $this->clean($options[6]) : "";
+      
+      // probably should have used a switch. i'm lazy
+      if ($count === 6) {
+        return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4,$option5);
+      } else if ($count === 5) {
+        return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4);
+      } else if ($count === 4) {
+        return $this->faker->$formatter($option0,$option1,$option2,$option3);
+      } else if ($count === 3) {
+        return $this->faker->$formatter($option0,$option1,$option2);
+      } else if ($count === 2) {
+        return $this->faker->$formatter($option0,$option1);
       } else {
-        return $this->faker->$formatter($options[0]);
+        return $this->faker->$formatter($option0);
       }
     }
     
