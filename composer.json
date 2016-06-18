@@ -1,6 +1,6 @@
 {
   "name":             "pattern-lab/plugin-faker",
-  "description":      "Faker for Pattern Lab",
+  "description":      "Faker Support for Pattern Lab",
   "keywords":         ["faker", "pattern lab"],
   "homepage":         "http://patternlab.io",
   "license":          "MIT",
@@ -14,9 +14,9 @@
     }
   ],
   "support": {
-    "issues":         "https://github.com/pattern-lab/mustachehelper-php-verbatim/issues",
+    "issues":         "https://github.com/pattern-lab/plugin-php-faker/issues",
     "wiki":           "http://patternlab.io/docs/",
-    "source":         "https://github.com/pattern-lab/mustachehelper-php-verbatim/releases"
+    "source":         "https://github.com/pattern-lab/plugin-php-faker/releases"
   },
   "autoload": {
     "psr-0": {
@@ -32,6 +32,7 @@
     "patternlab": {
       "config": {
         "faker": {
+          "on": true,
           "locale": "en_US"
         }
       }
