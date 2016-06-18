@@ -13,9 +13,14 @@
 namespace PatternLab\Faker;
 
 use \PatternLab\Config;
+use \PatternLab\Console;
+use \PatternLab\Data;
 use \PatternLab\PatternEngine\Twig\TwigUtil;
 
 class PatternLabListener extends \PatternLab\Listener {
+  
+  protected $faker;
+  protected $locale;
   
   /**
   * Add the listeners for this plug-in
@@ -28,13 +33,15 @@ class PatternLabListener extends \PatternLab\Listener {
     // set-up locale
     $locale = Config::getOption("faker.locale");
     $locale = ($locale) ? $locale : "en_US";
+    $this->locale = $locale;
     
     // set-up Faker
     $this->faker = \Faker\Factory::create($locale);
-    $this->faker->addProvider(new \Faker\Provider\Color($faker));
-    $this->faker->addProvider(new \Faker\Provider\Payment($faker));
-    $this->faker->addProvider(new \Faker\Provider\DateTime($faker));
-    $this->faker->addProvider(new \Faker\Provider\Image($faker));
+    $this->faker->addProvider(new \Faker\Provider\Color($this->faker));
+    $this->faker->addProvider(new \Faker\Provider\Payment($this->faker));
+    $this->faker->addProvider(new \Faker\Provider\DateTime($this->faker));
+    $this->faker->addProvider(new \Faker\Provider\Image($this->faker));
+    $this->faker->addProvider(new \Faker\Provider\Miscellaneous($this->faker));
     
   }
   
@@ -58,25 +65,33 @@ class PatternLabListener extends \PatternLab\Listener {
   * @return {String}       replaced version of link.pattern
   */
   private function compareReplaceFaker($value) {
-    if (is_string($value) && preg_match("/^Faker\.([A-z]+)(\((\'|\")?([A-z]+)?(\'|\")?\))?$/",$value,$matches)) {
+    if (is_string($value) && (strpos($value,"Faker.") === 0)) {
+      preg_match("/^Faker\.([A-z]+)(\(('|\")?(.*)?('|\")?\))?$/",$value,$matches);
       $formatter = $matches[1];
-      $options   = isset($matches[5]) ? $matches[5] : "";
+      $options   = isset($matches[4]) ? $matches[4] : "";
       if ($options != "") {
         return $this->formatOptionsAndFake($formatter, $options);
       } else {
-        return $this->faker->$formatter;
+        try {
+          return $this->faker->$formatter;
+        } catch (\InvalidArgumentException $e) {
+          Console::writeWarning("Faker plugin error: ".$e->getMessage()."...");
+          return $value;
+        }
       }
     }
     return $value;
   }
   
   /**
-  * Fake some content
+  * Fake some content. Replace the entire store.
   */
   public function fakeContent() {
     
-    $foo = $this->recursiveWalk(Data::get());
-    print_r($foo);
+    if ((bool)Config::getOption("faker.on")) {
+      $fakedContent = $this->recursiveWalk(Data::get());
+      Data::replaceStore($fakedContent);
+    }
     
   }
   
@@ -110,19 +125,24 @@ class PatternLabListener extends \PatternLab\Listener {
       $option6 = isset($options[6]) ? $this->clean($options[6]) : "";
       
       // probably should have used a switch. i'm lazy
-      if ($count === 6) {
-        return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4,$option5);
-      } else if ($count === 5) {
-        return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4);
-      } else if ($count === 4) {
-        return $this->faker->$formatter($option0,$option1,$option2,$option3);
-      } else if ($count === 3) {
-        return $this->faker->$formatter($option0,$option1,$option2);
-      } else if ($count === 2) {
-        return $this->faker->$formatter($option0,$option1);
-      } else {
-        return $this->faker->$formatter($option0);
+      try {
+        if ($count === 6) {
+          return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4,$option5);
+        } else if ($count === 5) {
+          return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4);
+        } else if ($count === 4) {
+          return $this->faker->$formatter($option0,$option1,$option2,$option3);
+        } else if ($count === 3) {
+          return $this->faker->$formatter($option0,$option1,$option2);
+        } else if ($count === 2) {
+          return $this->faker->$formatter($option0,$option1);
+        } else {
+          return $this->faker->$formatter($option0);
+        }
+      } catch (\InvalidArgumentException $e) {
+        Console::writeWarning("Faker plugin error: ".$e->getMessage()."...");
       }
+      
     }
     
   }
@@ -143,7 +163,4 @@ class PatternLabListener extends \PatternLab\Listener {
     }
     return $array;
   }
-  
-
-  
 }
