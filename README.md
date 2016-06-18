@@ -1,4 +1,4 @@
-![license](https://img.shields.io/github/license/pattern-lab/plugin-php-faker.svg?maxAge=2592000)]
+![license](https://img.shields.io/github/license/pattern-lab/plugin-php-faker.svg?maxAge=2592000)
 [![Packagist](https://img.shields.io/packagist/v/pattern-lab/plugin-faker.svg?maxAge=2592000)](https://packagist.org/packages/pattern-lab/plugin-faker) [![Gitter](https://img.shields.io/gitter/room/pattern-lab/php.svg?maxAge=2592000)](https://gitter.im/pattern-lab/php)
 
 # Faker Plugin for Pattern Lab
