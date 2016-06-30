@@ -31,7 +31,7 @@ class PatternLabListener extends \PatternLab\Listener {
     $this->addListener("patternData.dataLoaded","fakeContent");
     
     // set-up locale
-    $locale = Config::getOption("faker.locale");
+    $locale = Config::getOption("plugins.faker.locale");
     $locale = ($locale) ? $locale : "en_US";
     $this->locale = $locale;
     
@@ -88,7 +88,7 @@ class PatternLabListener extends \PatternLab\Listener {
   */
   public function fakeContent() {
     
-    if ((bool)Config::getOption("faker.on")) {
+    if ((bool)Config::getOption("plugins.faker.enabled")) {
       $fakedContent = $this->recursiveWalk(Data::get());
       Data::replaceStore($fakedContent);
     }
