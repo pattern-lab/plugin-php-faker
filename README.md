@@ -59,7 +59,7 @@ The content produced by Faker can be localized based on a Faker locale. If the F
 
 To update your Faker locale you can either directly edit `./config/config.yml` or use the command line option:
 
-    php core/console --config --set faker.locale=[locale]
+    php core/console --config --set plugins.faker.locale=[locale]
 
 For example:
 
