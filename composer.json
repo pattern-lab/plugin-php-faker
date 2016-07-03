@@ -31,9 +31,11 @@
   "extra": {
     "patternlab": {
       "config": {
-        "faker": {
-          "on": true,
-          "locale": "en_US"
+        "plugins": {
+          "faker": {
+            "enabled": true,
+            "locale": "en_US"
+          }
         }
       }
     }

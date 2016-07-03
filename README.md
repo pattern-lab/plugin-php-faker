@@ -1,5 +1,5 @@
-![license](https://img.shields.io/github/license/pattern-lab/plugin-php-faker.svg?maxAge=2592000)
-[![Packagist](https://img.shields.io/packagist/v/pattern-lab/plugin-faker.svg?maxAge=2592000)](https://packagist.org/packages/pattern-lab/plugin-faker) [![Gitter](https://img.shields.io/gitter/room/pattern-lab/php.svg?maxAge=2592000)](https://gitter.im/pattern-lab/php)
+![license](https://img.shields.io/github/license/pattern-lab/plugin-php-faker.svg)
+[![Packagist](https://img.shields.io/packagist/v/pattern-lab/plugin-faker.svg)](https://packagist.org/packages/pattern-lab/plugin-faker) [![Gitter](https://img.shields.io/gitter/room/pattern-lab/php.svg)](https://gitter.im/pattern-lab/php)
 
 # Faker Plugin for Pattern Lab
 
@@ -39,17 +39,17 @@ To specify a gender you would use:
 
 The Faker Plugin supports the following content formatters:
 
-* Faker\Provider\en_US\Person
-* Faker\Provider\en_US\Address
-* Faker\Provider\en_US\PhoneNumber
-* Faker\Provider\en_US\Company
-* Faker\Provider\Lorem
-* Faker\Provider\Internet
-* Faker\Provider\Color
-* Faker\Provider\Payment
-* Faker\Provider\DateTime
-* Faker\Provider\Image
-* Faker\Provider\Miscellaneous
+* `Faker\Provider\en_US\Person`
+* `Faker\Provider\en_US\Address`
+* `Faker\Provider\en_US\PhoneNumber`
+* `Faker\Provider\en_US\Company`
+* `Faker\Provider\Lorem`
+* `Faker\Provider\Internet`
+* `Faker\Provider\Color`
+* `Faker\Provider\Payment`
+* `Faker\Provider\DateTime`
+* `Faker\Provider\Image`
+* `Faker\Provider\Miscellaneous`
 
 See the official repository for a [list of options available to each formatter](https://github.com/fzaninotto/Faker#formatters).
 
@@ -59,14 +59,14 @@ The content produced by Faker can be localized based on a Faker locale. If the F
 
 To update your Faker locale you can either directly edit `./config/config.yml` or use the command line option:
 
-    php core/console --config --set faker.locale=[locale]
+    php core/console --config --set plugins.faker.locale=[locale]
 
 For example:
 
-    php core/console --config --set faker.locale=fr_FR
+    php core/console --config --set plugins.faker.locale=fr_FR
 
 ## Disabling the Plugin
 
 To disable the Faker plugin you can either directly edit `./config/config.yml` or use the command line option:
 
-    php core/console --config --set faker.on=false
+    php core/console --config --set plugins.faker.enabled=false
