@@ -113,32 +113,10 @@ class PatternLabListener extends \PatternLab\Listener {
       
       // get explodey
       $options = explode(",", $options);
-      $count   = count($options);
-      
-      // clean up the options
-      $option0 = $this->clean($options[0]);
-      $option1 = isset($options[1]) ? $this->clean($options[1]) : "";
-      $option2 = isset($options[2]) ? $this->clean($options[2]) : "";
-      $option3 = isset($options[3]) ? $this->clean($options[3]) : "";
-      $option4 = isset($options[4]) ? $this->clean($options[4]) : "";
-      $option5 = isset($options[5]) ? $this->clean($options[5]) : "";
-      $option6 = isset($options[6]) ? $this->clean($options[6]) : "";
-      
-      // probably should have used a switch. i'm lazy
+      $cleaned_options = array_map(array($this, 'clean'), $options);
+
       try {
-        if ($count === 6) {
-          return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4,$option5);
-        } else if ($count === 5) {
-          return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4);
-        } else if ($count === 4) {
-          return $this->faker->$formatter($option0,$option1,$option2,$option3);
-        } else if ($count === 3) {
-          return $this->faker->$formatter($option0,$option1,$option2);
-        } else if ($count === 2) {
-          return $this->faker->$formatter($option0,$option1);
-        } else {
-          return $this->faker->$formatter($option0);
-        }
+        return call_user_func_array(array($this->faker, $formatter), $cleaned_options);
       } catch (\InvalidArgumentException $e) {
         Console::writeWarning("Faker plugin error: ".$e->getMessage()."...");
       }
