@@ -104,13 +104,15 @@ class PatternLabListener extends \PatternLab\Listener {
   */
   public function formatOptionsAndFake($formatter, $options) {
     
-    if (($formatter == "date") || ($formatter == "time")) {
-      
+    if (in_array($formatter, ["randomElements", "randomElement", "shuffle", "date", "time"])) {
       // don't try to parse date or time options. cross our fingers
+      // Also if the 
+      if ($formatter == "date" || $formatter == "time") {
+        return $this->faker->$formatter($options);
+      }
+      $options = explode(",", $options);
       return $this->faker->$formatter($options);
-      
     } else {
-      
       // get explodey
       $options = explode(",", $options);
       $count   = count($options);
@@ -119,25 +121,32 @@ class PatternLabListener extends \PatternLab\Listener {
       $option0 = $this->clean($options[0]);
       $option1 = isset($options[1]) ? $this->clean($options[1]) : "";
       $option2 = isset($options[2]) ? $this->clean($options[2]) : "";
-      $option3 = isset($options[3]) ? $this->clean($options[3]) : "";
+      $option3 = isset($options[3]) ? $this->clean($options[3]) : ""; 
       $option4 = isset($options[4]) ? $this->clean($options[4]) : "";
       $option5 = isset($options[5]) ? $this->clean($options[5]) : "";
       $option6 = isset($options[6]) ? $this->clean($options[6]) : "";
       
-      // probably should have used a switch. i'm lazy
       try {
-        if ($count === 6) {
-          return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4,$option5);
-        } else if ($count === 5) {
-          return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4);
-        } else if ($count === 4) {
-          return $this->faker->$formatter($option0,$option1,$option2,$option3);
-        } else if ($count === 3) {
-          return $this->faker->$formatter($option0,$option1,$option2);
-        } else if ($count === 2) {
-          return $this->faker->$formatter($option0,$option1);
-        } else {
-          return $this->faker->$formatter($option0);
+        switch ($count) {
+          case 6:
+            return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4,$option5);
+            break;
+          case 5:
+            return $this->faker->$formatter($option0,$option1,$option2,$option3,$option4);
+            break;
+          case 4:
+            return $this->faker->$formatter($option0,$option1,$option2,$option3);
+            break;
+          case 3:
+            return $this->faker->$formatter($option0,$option1,$option2);
+            break;
+          case 2:
+            return $this->faker->$formatter($option0,$option1);
+            break;
+          
+          default:
+            return $this->faker->$formatter($option0);
+            break;
         }
       } catch (\InvalidArgumentException $e) {
         Console::writeWarning("Faker plugin error: ".$e->getMessage()."...");
