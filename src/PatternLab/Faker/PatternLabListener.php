@@ -110,7 +110,7 @@ class PatternLabListener extends \PatternLab\Listener {
       if ($formatter == "date" || $formatter == "time") {
         return $this->faker->$formatter($options);
       }
-      $options = explode(",", $options);
+      eval('$options = ' . $options . ';');
       return $this->faker->$formatter($options);
     } else {
       // get explodey
