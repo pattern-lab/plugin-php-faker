@@ -35,6 +35,11 @@ class PatternLabListener extends \PatternLab\Listener {
     $locale = ($locale) ? $locale : "en_US";
     $this->locale = $locale;
     
+    // set-up time zone if not already set to prevent errors in PHP 5.4+
+    if (!ini_get('date.timezone')) {
+      date_default_timezone_set('UTC');
+    }
+    
     // set-up Faker
     $this->faker = \Faker\Factory::create($locale);
     $this->faker->addProvider(new \Faker\Provider\Color($this->faker));
