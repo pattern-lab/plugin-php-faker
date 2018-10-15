@@ -38,6 +38,7 @@ class PatternLabListener extends \PatternLab\Listener {
     // Setup Faker seed directive, so we can controll the faker generated results..
     $setUniqueResults = Config::getOption("plugins.faker.setUniqueResults");
 
+
     // set-up time zone if not already set to prevent errors in PHP 5.4+
     if (!ini_get('date.timezone')) {
       date_default_timezone_set('UTC');
@@ -49,7 +50,7 @@ class PatternLabListener extends \PatternLab\Listener {
     if (!empty($setUniqueResults)) {
       $this->faker->seed($setUniqueResults);
     }
-    
+
     $this->faker->addProvider(new \Faker\Provider\Color($this->faker));
     $this->faker->addProvider(new \Faker\Provider\Payment($this->faker));
     $this->faker->addProvider(new \Faker\Provider\DateTime($this->faker));
