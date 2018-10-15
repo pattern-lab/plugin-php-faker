@@ -18,38 +18,47 @@ use \PatternLab\Data;
 use \PatternLab\PatternEngine\Twig\TwigUtil;
 
 class PatternLabListener extends \PatternLab\Listener {
-  
+
   protected $faker;
   protected $locale;
-  
+
   /**
   * Add the listeners for this plug-in
   */
   public function __construct() {
-    
+
     // add listener
     $this->addListener("patternData.dataLoaded","fakeContent");
-    
+
     // set-up locale
     $locale = Config::getOption("plugins.faker.locale");
     $locale = ($locale) ? $locale : "en_US";
     $this->locale = $locale;
-    
+
+    // Setup Faker seed directive, so we can controll the faker generated results..
+    $setUniqueResults = Config::getOption("plugins.faker.setUniqueResults");
+
+
     // set-up time zone if not already set to prevent errors in PHP 5.4+
     if (!ini_get('date.timezone')) {
       date_default_timezone_set('UTC');
     }
-    
+
     // set-up Faker
     $this->faker = \Faker\Factory::create($locale);
+    // Force seed generator to produce the same results.
+    if (!empty($setUniqueResults)) {
+      $this->faker->seed($setUniqueResults);
+    }
+
     $this->faker->addProvider(new \Faker\Provider\Color($this->faker));
     $this->faker->addProvider(new \Faker\Provider\Payment($this->faker));
     $this->faker->addProvider(new \Faker\Provider\DateTime($this->faker));
     $this->faker->addProvider(new \Faker\Provider\Image($this->faker));
     $this->faker->addProvider(new \Faker\Provider\Miscellaneous($this->faker));
-    
+
   }
-  
+
   /**
   * Clean the passed option
   * @param  {String}       the option to be cleaned
@@ -62,7 +71,7 @@ class PatternLabListener extends \PatternLab\Listener {
     $option = (($option[strlen($option)-1] == '"') || ($option[strlen($option)-1] == "'")) ? substr($option, 0, -1) : $option;
     return $option;
   }
-  
+
   /**
   * Go through data and replace any values that match items from the link.array
   * @param  {String}       a string entry from the data to check for link.pattern
@@ -87,19 +96,19 @@ class PatternLabListener extends \PatternLab\Listener {
     }
     return $value;
   }
-  
+
   /**
   * Fake some content. Replace the entire store.
   */
   public function fakeContent() {
-    
+
     if ((bool)Config::getOption("plugins.faker.enabled")) {
       $fakedContent = $this->recursiveWalk(Data::get());
       Data::replaceStore($fakedContent);
     }
-    
+
   }
-  
+
   /**
   * Format the options and fake out the data
   * @param  {String}       the name of the formatter
@@ -108,18 +117,18 @@ class PatternLabListener extends \PatternLab\Listener {
   * @return {String}       the formatted text
   */
   public function formatOptionsAndFake($formatter, $options) {
-    
+
     if (($formatter == "date") || ($formatter == "time")) {
-      
+
       // don't try to parse date or time options. cross our fingers
       return $this->faker->$formatter($options);
-      
+
     } else {
-      
+
       // get explodey
       $options = explode(",", $options);
       $count   = count($options);
-      
+
       // clean up the options
       $option0 = $this->clean($options[0]);
       $option1 = isset($options[1]) ? $this->clean($options[1]) : "";
@@ -128,7 +137,7 @@ class PatternLabListener extends \PatternLab\Listener {
       $option4 = isset($options[4]) ? $this->clean($options[4]) : "";
       $option5 = isset($options[5]) ? $this->clean($options[5]) : "";
       $option6 = isset($options[6]) ? $this->clean($options[6]) : "";
-      
+
       // probably should have used a switch. i'm lazy
       try {
         if ($count === 6) {
@@ -147,11 +156,11 @@ class PatternLabListener extends \PatternLab\Listener {
       } catch (\InvalidArgumentException $e) {
         Console::writeWarning("Faker plugin error: ".$e->getMessage()."...");
       }
-      
+
     }
-    
+
   }
-  
+
   /**
   * Work through a given array and decide if the walk should continue or if we should replace the var
   * @param  {Array}       the array to be checked
