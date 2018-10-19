@@ -1,5 +1,5 @@
 {
-  "name":             "pattern-lab/plugin-faker",
+  "name":             "northwell-health/plugin-faker",
   "description":      "Faker Support for Pattern Lab",
   "keywords":         ["faker", "pattern lab"],
   "homepage":         "http://patternlab.io",
@@ -7,10 +7,10 @@
   "type":             "patternlab-plugin",
   "authors": [
     {
-      "name":         "Dave Olsen",
-      "email":        "dmolsen@gmail.com",
-      "homepage":     "http://dmolsen.com",
-      "role":         "Lead Developer"
+      "name":         "Don McGrath",
+      "email":        "dmcgrath1@northwell.edu",
+      "homepage":     "northwell.edu",
+      "role":         "Senior Developer"
     }
   ],
   "support": {
