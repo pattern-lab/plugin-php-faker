@@ -28,7 +28,7 @@ class PatternLabListener extends \PatternLab\Listener {
   public function __construct() {
     
     // add listener
-    $this->addListener("patternData.dataLoaded","fakeContent");
+    $this->addListener("patternData.lineageHelperEnd","fakeContent");
     
     // set-up locale
     $locale = Config::getOption("plugins.faker.locale");
