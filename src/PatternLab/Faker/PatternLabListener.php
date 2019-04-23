@@ -34,6 +34,9 @@ class PatternLabListener extends \PatternLab\Listener {
     $locale = Config::getOption("plugins.faker.locale");
     $locale = ($locale) ? $locale : "en_US";
     $this->locale = $locale;
+
+    // Setup Faker seed directive, so we can controll the faker generated results..
+    $setUniqueResults = Config::getOption("plugins.faker.setUniqueResults");
     
     // set-up time zone if not already set to prevent errors in PHP 5.4+
     if (!ini_get('date.timezone')) {
@@ -42,6 +45,12 @@ class PatternLabListener extends \PatternLab\Listener {
     
     // set-up Faker
     $this->faker = \Faker\Factory::create($locale);
+
+    // Force seed generator to produce the same results.
+    if (!empty($setUniqueResults)) {
+      $this->faker->seed($setUniqueResults);
+    }
+
     $this->faker->addProvider(new \Faker\Provider\Color($this->faker));
     $this->faker->addProvider(new \Faker\Provider\Payment($this->faker));
     $this->faker->addProvider(new \Faker\Provider\DateTime($this->faker));
